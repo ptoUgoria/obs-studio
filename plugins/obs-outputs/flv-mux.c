@@ -69,6 +69,8 @@ static void build_flv_meta_data(obs_output_t *context, uint8_t **output,
 	char *enc = buf;
 	char *end = enc + sizeof(buf);
 	struct dstr encoder_name = {0};
+	struct dstr videocodecid_name = {0};
+	struct dstr audiocodecid_name = {0};
 
 	enc_str(&enc, end, "@setDataFrame");
 	enc_str(&enc, end, "onMetaData");
@@ -84,11 +86,19 @@ static void build_flv_meta_data(obs_output_t *context, uint8_t **output,
 	enc_num_val(&enc, end, "height",
 		    (double)obs_encoder_get_height(vencoder));
 
-	enc_num_val(&enc, end, "videocodecid", VIDEODATA_AVCVIDEOPACKET);
+//	enc_num_val(&enc, end, "videocodecid", VIDEODATA_AVCVIDEOPACKET);
+	dstr_printf(&videocodecid_name, "avc1");
+	enc_str_val(&enc, end, "videocodecid", videocodecid_name.array);
+	dstr_free(&videocodecid_name);
+
 	enc_num_val(&enc, end, "videodatarate", encoder_bitrate(vencoder));
 	enc_num_val(&enc, end, "framerate", video_output_get_frame_rate(video));
 
-	enc_num_val(&enc, end, "audiocodecid", AUDIODATA_AAC);
+//	enc_num_val(&enc, end, "audiocodecid", AUDIODATA_AAC);
+	dstr_printf(&audiocodecid_name, "mp4a");
+	enc_str_val(&enc, end, "audiocodecid", audiocodecid_name.array);
+	dstr_free(&audiocodecid_name);
+
 	enc_num_val(&enc, end, "audiodatarate", encoder_bitrate(aencoder));
 	enc_num_val(&enc, end, "audiosamplerate",
 		    (double)obs_encoder_get_sample_rate(aencoder));
@@ -105,16 +115,16 @@ static void build_flv_meta_data(obs_output_t *context, uint8_t **output,
 	enc_bool_val(&enc, end, "5.1", audio_output_get_channels(audio) == 6);
 	enc_bool_val(&enc, end, "7.1", audio_output_get_channels(audio) == 8);
 
-	dstr_printf(&encoder_name, "%s (libobs version ", MODULE_NAME);
+	dstr_printf(&encoder_name, "Blackmagic Design AVC Encoder");
 
-#ifdef HAVE_OBSCONFIG_H
-	dstr_cat(&encoder_name, OBS_VERSION);
-#else
-	dstr_catf(&encoder_name, "%d.%d.%d", LIBOBS_API_MAJOR_VER,
-		  LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER);
-#endif
+// #ifdef HAVE_OBSCONFIG_H
+//	dstr_cat(&encoder_name, OBS_VERSION);
+//#else
+//	dstr_catf(&encoder_name, "%d.%d.%d", LIBOBS_API_MAJOR_VER,
+//		  LIBOBS_API_MINOR_VER, LIBOBS_API_PATCH_VER);
+//#endif
 
-	dstr_cat(&encoder_name, ")");
+//	dstr_cat(&encoder_name, ")");
 
 	enc_str_val(&enc, end, "encoder", encoder_name.array);
 	dstr_free(&encoder_name);
