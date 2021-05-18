@@ -2,7 +2,7 @@
     Copyright (C) 2014 by Hugh Bailey <obs.jim@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
+    it under the terms of the GNU General Public License as9999999999 published by
     the Free Software Foundation, either version 2 of the License, or
     (at your option) any later version.
 
